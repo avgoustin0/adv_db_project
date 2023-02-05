@@ -7,7 +7,7 @@ from pyspark.sql.window import Window
 from pyspark.sql.functions import col, row_number
 spark=SparkSession.builder.appName("Q4").getOrCreate()
 
-df=spark.read.parquet("hdfs:///parquet/")
+df=spark.read.parquet("hdfs:///dataframe_yellow.parquet")
 
 start=time.time()
 df = df.withColumn("month",f.month(f.col("tpep_pickup_datetime")))
@@ -18,6 +18,14 @@ df=df.withColumn("rank",rank().over(windowDept))
 df=df.filter(col("rank")<=3)
 df=df.select(f.col("month"),f.col("week_day_full"),f.col("tpep_pickup_datetime"),f.col("tpep_dropoff_datetime"),f.col("Passenger_count"))
 df = df.withColumn('Hour', f.hour(df.tpep_pickup_datetime))
-#df.write.parquet("hdfs:///Q/Q4.parquet")
+df.write.parquet("hdfs:///Q/Q4.parquet")
+#df.collect()
 end=time.time()
-df.show()
+#df.show()
+
+print()
+print()
+print(f'Time taken: {end-start} seconds.')
+print()
+print()
+

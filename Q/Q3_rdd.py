@@ -4,7 +4,7 @@ import os, sys, time
 from pyspark.sql import SparkSession
 spark=SparkSession.builder.appName("Q3_rdd").getOrCreate()
 
-df=spark.read.parquet("hdfs:///parquet/")
+df=spark.read.parquet("hdfs:///dataframe_yellow.parquet")
 rdd = df.rdd
 
 def convert(row):
@@ -26,13 +26,14 @@ rdd1 = rdd.map(convert)
 #for y in rdd1.take(20):
 #        print(y)
 rdd1 = rdd1.reduceByKey(lambda x,y : (x[0]+y[0], x[1] + y[1], x[2] + y[2])).mapValues(lambda x: (x[0]/x[1], x[2]/x[1]))
-#rdd1.saveAsTextFile("hdfs:///Q/Q3_rdd.parquet")
+rdd1.saveAsTextFile("hdfs:///Q/Q3_rdd.txt")
+#rdd1.collect()
 end=time.time()
-for y in rdd1.take(20):
-        print(y)
+#for y in rdd1.take(20):
+#        print(y)
 
 print()
 print()
 print(f'Time taken: {end-start} seconds.')
-
-#rdd = spark.sparkContext.textFile("hdfs:///Q/Q3_rdd.txt")
+print()
+print()
